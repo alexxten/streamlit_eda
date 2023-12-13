@@ -10,10 +10,10 @@
 2. Создание "базового" датафрейма запросами из БД
 Были предварительно сгенерированы модели таблиц БД с помощью библиотеки `sqlacodegen`:
 <br>`sqlacodegen_v2 postgresql://{user}:{password}@{host}:{port}/{db_name} > db/models.py`<br>
-Далее был задействован скрипт `scripts/create_base_data.py`, результатом выполнения которого является файл `datasets_prepared/base_data.csv`
+Далее был задействован скрипт `scripts/create_base_data.py`, результатом выполнения которого является файл `datasets/prepared/base_data.csv`
 <br><br>
 3. Обработка "базового" датафрейма и создание итогового
-То что не удалось сделать через SQL пришлось доделать в jupyter-notebook - `scripts/data_preparation.ipynb`. Заодно проверяем наличие пустых значений после join'ов. Результатом является файл `datasets_prepared/data.csv`, который используется для всех дальнейших действий
+То что не удалось сделать через SQL пришлось доделать в jupyter-notebook - `scripts/data_preparation.ipynb`. Заодно проверяем наличие пустых значений после join'ов. Результатом является файл `datasets/prepared/data.csv`, который используется для всех дальнейших действий
 <br><br>
 4. Немножко анализа, генерации картинок и построения модели в jupyter-notebook
 <br><br>

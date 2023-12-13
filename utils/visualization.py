@@ -1,18 +1,21 @@
-import pandas as pd
-import plotly.express as px
-from plotly.graph_objs import Figure
 import matplotlib.pyplot as plt
+import pandas as pd
 import seaborn as sns
-from seaborn import PairGrid
+from matplotlib.figure import Figure
 
 
-def correlation_heatmap(data: pd.DataFrame) -> Figure:
+def histplot(*, data: pd.DataFrame, column: str) -> Figure:
+    sns.set_style('darkgrid')
     fig, ax = plt.subplots()
-    sns.heatmap(data.corr(), ax=ax)
+    fig.set_size_inches(3, 3)
+    sns.histplot(data[column], ax=ax)
     return fig
 
 
-def pairplot(data: pd.DataFrame) -> PairGrid:
-    fig = sns.pairplot(data)
+def target_countplot(data: pd.DataFrame) -> Figure:
+    sns.set_style('darkgrid')
+    fig = plt.figure(figsize=(3, 3))
+    sns.countplot(x='TARGET', data=data, alpha=.80, palette=['grey', 'lightgreen'])
+    plt.title('TARGET 0 vs TARGET 1')
+    plt.ylabel('Количество записей')
     return fig
-

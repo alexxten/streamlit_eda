@@ -32,4 +32,8 @@ if __name__ == '__main__':
     records = [r._asdict() for r in records]
     df = pd.DataFrame(records)
     df.columns = map(str.upper, df.columns)
-    df.to_csv(os.path.join(ROOT_DIR, 'datasets_prepared', 'base_data.csv'), index=False)
+    df.to_csv(
+        os.path.join(ROOT_DIR, 'datasets', 'prepared', 'base_data.csv'),
+        index=False,
+    )
+
