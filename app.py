@@ -49,7 +49,6 @@ def render_page(
         show_df = st.sidebar.checkbox('Показать датасет', disabled=False)
         if show_df:
             st.subheader('Датасет')
-            st.write('CSV-файл с данными вы можете найти по ссылке ')
             st.write(data)
 
         show_statistics = st.sidebar.checkbox('Показать статистики')
