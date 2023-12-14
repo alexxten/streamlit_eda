@@ -13,56 +13,13 @@ def preload_content() -> dict:
     clients_img = Image.open(os.path.join(STATIC, 'clients.jpg'))
     corr_img = Image.open(os.path.join(STATIC, 'corr.png'))
     feature_imp_img = Image.open(os.path.join(STATIC, 'feature_imp.png'))
+    confusion_matrix_img = Image.open(os.path.join(STATIC, 'confusion_matrix.png'))
     return {
         'main_img': clients_img,
         'corr': corr_img,
         'feature_imp_img': feature_imp_img,
+        'confusion_matrix': confusion_matrix_img,
     }
-
-
-# def highlight_weighs(s):
-#     """ generate colors to highlight weights """
-#
-#     return ['background-color: #E6F6E4']*len(s) if s['Вес'] > 0 else ['background-color: #F6EBE4']*len(s)
-
-
-# def pack_input(sex, age, loyalty, distance, p_class, travel_type, dep_delay, arr_delay, wifi, fun,
-#                time_conv, onboard_service, booking, leg, gate_loc, baggage, food, checkin,
-#                online_boarding, inflight_service, seat, cleanliness):
-#     """ translate input values to pass to model """
-#
-#     rule = {'Женский': 1,
-#             'Мужской': 0,
-#             'Личная': 0,
-#             'По работе': 1,
-#             'Лояльный': 1,
-#             'Нелояльный': 0}
-#
-#     data = {'Gender': rule[sex],
-#             'Age': age,
-#             'Flight Distance': distance,
-#             'Departure Delay in Minutes': dep_delay,
-#             'Arrival Delay in Minutes': arr_delay,
-#             'Inflight wifi service': wifi,
-#             'Departure/Arrival time convenient': time_conv,
-#             'Ease of Online booking': booking,
-#             'Gate location': gate_loc,
-#             'Food and drink': food,
-#             'Online boarding': online_boarding,
-#             'Seat comfort': seat,
-#             'Inflight entertainment': fun,
-#             'On-board service': onboard_service,
-#             'Leg room service': leg,
-#             'Baggage handling': baggage,
-#             'Checkin service': checkin,
-#             'Inflight service': inflight_service,
-#             'Cleanliness': cleanliness,
-#             'Loyalty': rule[loyalty],
-#             'Business_travel': rule[travel_type],
-#             'Eco': 1 if p_class == 'Эко' else 0,
-#             'Eco Plus': 1 if p_class == 'Эко плюс' else 0}
-#
-#     return pd.DataFrame(data, index=[0])
 
 
 def render_page(
@@ -183,6 +140,10 @@ def render_page(
                         'loan_num_total': loan_num_total,
                         'loan_num_closed': loan_num_closed,
                     },
+                    # тк модель обучалась без agreemenk_pk убираем его и target
+                    columns_order=[
+                        i for i in data.columns if i not in ('AGREEMENT_RK', 'TARGET')
+                    ],
                 )
                 if pred == 1:
                     st.success(
@@ -190,17 +151,30 @@ def render_page(
                         ':thumbsup: :thumbsup:',
                     )
                     with st.expander('Подробнее'):
-                        st.write(f'Вероятность этого: **`{round(max(proba[0]), 3)}`**')
+                        st.write(proba)
                 elif pred == 0:
                     st.error('Вероятнее клиент не откликнется на предложение банка')
                     with st.expander('Подробнее'):
-                        st.write(f'Вероятность этого: **`{round(max(proba[0]), 3)}`**')
+                        st.write(proba)
                 else:
                     st.error('Что-то пошло не так...')
 
     with tab3:
-        st.subheader('Значимость признаков для модели')
-        st.image(static['feature_imp_img'])
+        st.sidebar.subheader('Оценка')
+        st.write(
+            'Предположение: Ввиду того что в выборке '
+            'гораздо меньше объектов с target=1 (клиент откликнется), чем с target=0,'
+            'прогноз модели чаще всего отрицательный (клиент не откликнется)',
+        )
+        show_feature_imp = st.sidebar.checkbox('Показать значимость признаков')
+        if show_feature_imp:
+            st.subheader('Значимость признаков для модели')
+            st.image(static['feature_imp_img'])
+
+        show_confusion_matrix = st.sidebar.checkbox('Показать матрицу ошибок')
+        if show_confusion_matrix:
+            st.subheader('Матрица ошибок для тестовой выборки')
+            st.image(static['confusion_matrix'])
 
 
 def load_page() -> None:
